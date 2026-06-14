@@ -1,40 +1,617 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Health Smartwatch Prototype</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthWatch Pro</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple-dark: #5B21B6;
+      --purple-main: #7C3AED;
+      --purple-light: #A78BFA;
+      --blue-accent: #6366F1;
+      --text-dark: #111827;
+      --text-mid: #6B7280;
+      --text-light: #9CA3AF;
+      --white: #FFFFFF;
+      --bg-light: #F9FAFB;
+      --border: #E5E7EB;
+      --green: #10B981;
+    }
+
+    body { font-family: 'Inter', sans-serif; color: var(--text-dark); background: var(--white); }
+
+    /* ── NAVBAR ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 80px; background: var(--white);
+      border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+    }
+    
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 17px; color: var(--text-dark); text-decoration: none;
+    }
+    .nav-logo .logo-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--purple-main), var(--blue-accent));
+      border-radius: 9px; display: flex; align-items: center; justify-content: center;
+    }
+    .nav-logo .logo-icon svg { width: 18px; height: 18px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+    .nav-links a {
+      text-decoration: none; color: var(--text-mid); font-size: 14px; font-weight: 500;
+      transition: color .2s; cursor: pointer;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--purple-main); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple-main), var(--blue-accent));
+      color: var(--white); border: none; padding: 10px 22px; border-radius: 8px;
+      font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity .2s, transform .15s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    .hero {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 80px 80px 90px; gap: 60px; max-width: 1200px; margin: 0 auto;
+    }
+    .hero-left { flex: 1; max-width: 480px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #F5F3FF; color: var(--purple-main); border: 1px solid #DDD6FE;
+      padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 24px;
+    }
+    .badge svg { width: 13px; height: 13px; stroke: var(--purple-main); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .hero-title { font-size: 46px; font-weight: 800; line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 18px; color: var(--text-dark); }
+    .hero-title .accent {
+      background: linear-gradient(90deg, var(--purple-main), var(--blue-accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-desc { font-size: 15px; line-height: 1.7; color: var(--text-mid); margin-bottom: 36px; }
+    .hero-cta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .btn-primary-lg {
+      background: linear-gradient(135deg, var(--purple-main), var(--blue-accent));
+      color: var(--white); border: none; padding: 13px 26px; border-radius: 10px;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: opacity .2s, transform .15s, box-shadow .2s;
+      display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+      box-shadow: 0 4px 20px rgba(124,58,237,.35);
+    }
+    .btn-primary-lg:hover { opacity: .92; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,.4); }
+    .btn-outline {
+      background: transparent; color: var(--text-dark); border: 1.5px solid var(--border);
+      padding: 13px 22px; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer;
+      transition: border-color .2s, background .2s; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+    }
+    .btn-outline:hover { border-color: var(--purple-light); background: #F5F3FF; }
+    .btn-outline svg { width: 16px; height: 16px; stroke: var(--text-dark); fill: none; stroke-width: 2; }
+
+    /* ── HERO VISUAL ── */
+    .hero-right { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+    .dashboard-card {
+      background: var(--white); border-radius: 20px; padding: 24px 28px;
+      box-shadow: 0 8px 40px rgba(99,102,241,.18), 0 2px 12px rgba(0,0,0,.08);
+      border: 1.5px solid #EDE9FE; width: 340px; position: relative;
+    }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .card-label { font-size: 13px; color: var(--text-mid); font-weight: 500; }
+    .status-normal { font-size: 12px; font-weight: 600; color: var(--green); }
+    .bpm-value { font-size: 44px; font-weight: 800; color: var(--text-dark); letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+    .bpm-unit { font-size: 13px; font-weight: 500; color: var(--text-light); margin-left: 3px; }
+    .chart-bars { display: flex; align-items: flex-end; gap: 5px; height: 64px; margin-top: 18px; }
+    .bar { flex: 1; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, var(--purple-main), var(--blue-accent)); opacity: .85; transition: opacity .2s; }
+    .bar:hover { opacity: 1; }
+    .notif {
+      position: absolute; bottom: -28px; right: -28px; background: var(--white);
+      border-radius: 14px; padding: 12px 16px; box-shadow: 0 6px 24px rgba(0,0,0,.12);
+      display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); min-width: 180px;
+    }
+    .notif-icon { width: 36px; height: 36px; background: #D1FAE5; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .notif-icon svg { width: 18px; height: 18px; stroke: var(--green); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .notif-text { font-size: 13px; }
+    .notif-title { font-weight: 700; color: var(--text-dark); }
+    .notif-sub { color: var(--text-light); font-size: 11.5px; margin-top: 1px; }
+
+    /* ── STATS BAND ── */
+    .stats-band { background: linear-gradient(110deg, #5B21B6 0%, #7C3AED 45%, #6366F1 100%); padding: 52px 80px; }
+    .stats-grid { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; }
+    .stat-number { font-size: 38px; font-weight: 800; color: var(--white); letter-spacing: -1px; line-height: 1; margin-bottom: 8px; }
+    .stat-label { font-size: 13px; color: rgba(255,255,255,.72); font-weight: 500; }
+
+    /* ── TAB SECTION ── */
+    .tab-section { background: var(--bg-light); padding: 72px 80px; }
+    .tab-section-inner { max-width: 1100px; margin: 0 auto; }
+
+    .tab-header { text-align: center; margin-bottom: 48px; }
+    .tab-header h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 12px; }
+    .tab-header p { font-size: 15px; color: var(--text-mid); }
+
+    /* Tab bar */
+    .tabbar {
+      display: flex; justify-content: center;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 6px; gap: 4px;
+      width: fit-content; margin: 0 auto 48px; box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    .tab-btn {
+      padding: 10px 28px; border-radius: 10px; border: none; background: transparent;
+      font-size: 14px; font-weight: 600; color: var(--text-mid); cursor: pointer;
+      transition: background .2s, color .2s, box-shadow .2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .tab-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .tab-btn:hover { color: var(--purple-main); background: #F5F3FF; }
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--purple-main), var(--blue-accent));
+      color: var(--white); box-shadow: 0 4px 14px rgba(124,58,237,.3);
+    }
+
+    /* Tab panels */
+    .tab-panel { display: none; animation: fadeIn .3s ease; }
+    .tab-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── FITUR panel ── */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .feature-card {
+      background: var(--white); border-radius: 16px; padding: 28px 24px;
+      border: 1px solid var(--border); transition: box-shadow .2s, transform .2s;
+    }
+    .feature-card:hover { box-shadow: 0 8px 32px rgba(124,58,237,.12); transform: translateY(-3px); }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 12px; margin-bottom: 18px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .feature-icon svg { width: 24px; height: 24px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .feature-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+    .feature-card p { font-size: 14px; color: var(--text-mid); line-height: 1.65; }
+
+    /* ── TESTIMONI panel ── */
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .testi-card {
+      background: var(--white); border-radius: 16px; padding: 28px 24px;
+      border: 1px solid var(--border); transition: box-shadow .2s;
+    }
+    .testi-card:hover { box-shadow: 0 8px 32px rgba(124,58,237,.1); }
+    .testi-stars { display: flex; gap: 3px; margin-bottom: 16px; }
+    .testi-stars svg { width: 16px; height: 16px; fill: #F59E0B; stroke: none; }
+    .testi-quote { font-size: 14px; line-height: 1.7; color: var(--text-mid); margin-bottom: 20px; font-style: italic; }
+    .testi-quote::before { content: '\201C'; }
+    .testi-quote::after  { content: '\201D'; }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-avatar {
+      width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700; color: white; flex-shrink: 0;
+    }
+    .testi-name { font-size: 14px; font-weight: 700; color: var(--text-dark); }
+    .testi-role { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+
+    /* ── TENTANG KAMI panel ── */
+    .about-wrap { display: flex; gap: 60px; align-items: center; }
+    .about-left { flex: 1; }
+    .about-left h3 { font-size: 28px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 16px; }
+    .about-left p { font-size: 15px; color: var(--text-mid); line-height: 1.75; margin-bottom: 20px; }
+    .about-values { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+    .about-value { display: flex; align-items: flex-start; gap: 12px; }
+    .about-value-icon { width: 32px; height: 32px; border-radius: 8px; background: #F5F3FF; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .about-value-icon svg { width: 16px; height: 16px; stroke: var(--purple-main); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .about-value-text strong { font-size: 14px; font-weight: 700; color: var(--text-dark); display: block; margin-bottom: 2px; }
+    .about-value-text span { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+    .about-right { flex: 1; }
+    .team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .team-card {
+      background: var(--white); border-radius: 14px; padding: 20px 18px;
+      border: 1px solid var(--border); text-align: center;
+    }
+    .team-avatar {
+      width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 800; color: white;
+    }
+    .team-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .team-role { font-size: 12px; color: var(--text-light); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .hero { flex-direction: column; padding: 48px 24px 60px; gap: 48px; }
+      .hero-left { max-width: 100%; }
+      .hero-title { font-size: 34px; }
+      .hero-right { width: 100%; }
+      .dashboard-card { width: 100%; max-width: 340px; }
+      .stats-band { padding: 40px 24px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+      .stat-number { font-size: 30px; }
+      .tab-section { padding: 52px 24px; }
+      .features-grid, .testi-grid { grid-template-columns: 1fr; }
+      .tabbar { width: 100%; }
+      .tab-btn { padding: 10px 16px; font-size: 13px; }
+      .about-wrap { flex-direction: column; gap: 36px; }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Health Smartwatch Dashboard</h1>
-  </header>
 
-  <main>
-    <section class="stats">
-      <div class="card">
-        <h2>Heart Rate</h2>
-        <p>78 bpm</p>
+  <!-- NAVBAR -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       </div>
-      <div class="card">
-        <h2>Steps</h2>
-        <p>5,432</p>
-      </div>
-      <div class="card">
-        <h2>Calories</h2>
-        <p>320 kcal</p>
-      </div>
-    </section>
+      HealthWatch Pro
+    </a>
+    <ul class="nav-links">
+      <li><a href="#tab-section" onclick="switchTab('fitur', event)" class="active" id="nav-fitur">Fitur</a></li>
+      <li><a href="#tab-section" onclick="switchTab('testimoni', event)" id="nav-testimoni">Testimoni</a></li>
+      <li><a href="#tab-section" onclick="switchTab('tentang', event)" id="nav-tentang">Tentang Kami</a></li>
+    </ul>
+    <a href="#" class="btn-primary">Mulai</a>
+  </nav>
 
-    <section class="activity">
-      <h2>Daily Activity</h2>
-      <div class="chart-placeholder">[Chart Area]</div>
-    </section>
-  </main>
+  <!-- HERO -->
+  <section style="max-width:1280px; margin:0 auto;">
+    <div class="hero">
+      <div class="hero-left">
+        <div class="badge">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Platform Monitoring Kesehatan Terpercaya
+        </div>
+        <h1 class="hero-title">
+          Jaga Kesehatan<br>
+          <span class="accent">Orang Tua Anda</span>
+        </h1>
+        <p class="hero-desc">
+          Smartwatch kesehatan terintegrasi dengan monitoring real-time, alert otomatis, dan akses langsung untuk keluarga dan tenaga medis profesional.
+        </p>
+        <div class="hero-cta">
+          <a href="#" class="btn-primary-lg">
+            Mulai Sekarang
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+          <a href="#" class="btn-outline">
+            <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Lihat Demo
+          </a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div style="position:relative; display:inline-block; padding-bottom:40px; padding-right:40px;">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <span class="card-label">Detak Jantung</span>
+              <span class="status-normal">Normal</span>
+            </div>
+            <div style="margin-bottom:16px;">
+              <span class="bpm-value">72</span>
+              <span class="bpm-unit">BPM</span>
+            </div>
+            <div class="chart-bars">
+              <div class="bar" style="height:40%"></div>
+              <div class="bar" style="height:60%"></div>
+              <div class="bar" style="height:50%"></div>
+              <div class="bar" style="height:75%"></div>
+              <div class="bar" style="height:65%"></div>
+              <div class="bar" style="height:80%"></div>
+              <div class="bar" style="height:70%"></div>
+              <div class="bar" style="height:90%"></div>
+              <div class="bar" style="height:72%"></div>
+              <div class="bar" style="height:85%"></div>
+              <div class="bar" style="height:78%"></div>
+              <div class="bar" style="height:95%"></div>
+            </div>
+          </div>
+          <div class="notif">
+            <div class="notif-icon">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="notif-text">
+              <div class="notif-title">Semua Normal</div>
+              <div class="notif-sub">Terakhir: 2 menit lalu</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <footer>
-    <p>© 2026 Health Smartwatch</p>
-  </footer>
+  <!-- STATS BAND -->
+  <section class="stats-band">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">10,000+</div>
+        <div class="stat-label">Pengguna Aktif</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Tenaga Medis</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">99.9%</div>
+        <div class="stat-label">Uptime</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Support</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB SECTION -->
+  <section class="tab-section" id="tab-section">
+    <div class="tab-section-inner">
+
+      <div class="tab-header">
+        <h2>Jelajahi <span style="background:linear-gradient(90deg,var(--purple-main),var(--blue-accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">HealthWatch Pro</span></h2>
+        <p>Temukan fitur unggulan, cerita pengguna nyata, dan tim di balik platform kami.</p>
+      </div>
+
+      <!-- Tab Bar -->
+      <div class="tabbar">
+        <button class="tab-btn active" id="btn-fitur" onclick="switchTab('fitur')">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Fitur
+        </button>
+        <button class="tab-btn" id="btn-testimoni" onclick="switchTab('testimoni')">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Testimoni
+        </button>
+        <button class="tab-btn" id="btn-tentang" onclick="switchTab('tentang')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Tentang Kami
+        </button>
+      </div>
+
+      <!-- PANEL: FITUR -->
+      <div class="tab-panel active" id="panel-fitur">
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon" style="background:linear-gradient(135deg,#7C3AED,#6366F1);">
+              <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <h3>Monitoring Detak Jantung</h3>
+            <p>Pantau detak jantung secara real-time 24 jam sehari. Sistem kami mendeteksi anomali dan mengirim notifikasi otomatis ke keluarga dan dokter.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon" style="background:linear-gradient(135deg,#10B981,#059669);">
+              <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            </div>
+            <h3>Pengukuran Tekanan Darah</h3>
+            <p>Ukur tekanan darah kapan saja tanpa alat tambahan. Data tersimpan otomatis dan bisa diakses oleh dokter atau anggota keluarga.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon" style="background:linear-gradient(135deg,#F59E0B,#EF4444);">
+              <svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+            </div>
+            <h3>Laporan Kesehatan Harian</h3>
+            <p>Dapatkan ringkasan kondisi kesehatan setiap hari dalam bentuk grafik yang mudah dipahami oleh lansia maupun keluarga.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon" style="background:linear-gradient(135deg,#EC4899,#8B5CF6);">
+              <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.62 4.92a2 2 0 0 1 1.99-2.19h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 17.5z"/></svg>
+            </div>
+            <h3>Alert Darurat Otomatis</h3>
+            <p>Saat terdeteksi kondisi darurat, sistem langsung menghubungi kontak darurat dan tenaga medis terdekat dalam hitungan detik.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon" style="background:linear-gradient(135deg,#3B82F6,#06B6D4);">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3>Akses Multi-Pengguna</h3>
+            <p>Seluruh anggota keluarga dan tenaga medis dapat mengakses data kesehatan dari satu akun dengan pengaturan izin yang fleksibel.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon" style="background:linear-gradient(135deg,#6366F1,#8B5CF6);">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h3>Keamanan Data Terenkripsi</h3>
+            <p>Data kesehatan pengguna dienkripsi dengan standar medis internasional dan tidak pernah dibagikan tanpa izin pemilik akun.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: TESTIMONI -->
+      <div class="tab-panel" id="panel-testimoni">
+        <div class="testi-grid">
+          <div class="testi-card">
+            <div class="testi-stars">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <p class="testi-quote">HealthWatch Pro benar-benar mengubah cara saya memantau kondisi ayah saya. Sekarang saya bisa tenang bekerja karena tahu ada yang selalu memantau beliau.</p>
+            <div class="testi-author">
+              <div class="testi-avatar" style="background:linear-gradient(135deg,#7C3AED,#6366F1);">A</div>
+              <div>
+                <div class="testi-name">Anisa Rahma</div>
+                <div class="testi-role">Anak dari pengguna, Jakarta</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <div class="testi-stars">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <p class="testi-quote">Sebagai dokter, saya sangat terbantu dengan data real-time dari pasien lansia saya. Laporan harian yang akurat membantu diagnosis jadi lebih tepat dan cepat.</p>
+            <div class="testi-author">
+              <div class="testi-avatar" style="background:linear-gradient(135deg,#10B981,#059669);">D</div>
+              <div>
+                <div class="testi-name">dr. Budi Santoso, Sp.JP</div>
+                <div class="testi-role">Dokter Spesialis Jantung, Bandung</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <div class="testi-stars">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <p class="testi-quote">Saya pakai HealthWatch Pro sejak setahun lalu. Tampilannya mudah dipahami bahkan oleh saya yang tidak terlalu paham teknologi. Sangat membantu!</p>
+            <div class="testi-author">
+              <div class="testi-avatar" style="background:linear-gradient(135deg,#F59E0B,#EF4444);">S</div>
+              <div>
+                <div class="testi-name">Siti Munawaroh</div>
+                <div class="testi-role">Pengguna aktif, 68 tahun, Surabaya</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <div class="testi-stars">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <p class="testi-quote">Alert darurat pernah menyelamatkan ibu saya ketika tekanan darahnya tiba-tiba naik di malam hari. Kami langsung dapat notifikasi dan bisa bertindak cepat.</p>
+            <div class="testi-author">
+              <div class="testi-avatar" style="background:linear-gradient(135deg,#EC4899,#8B5CF6);">R</div>
+              <div>
+                <div class="testi-name">Rizky Pratama</div>
+                <div class="testi-role">Anak dari pengguna, Medan</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <div class="testi-stars">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <p class="testi-quote">Tim support HealthWatch Pro sangat responsif. Saat ada kendala teknis, dalam hitungan menit langsung dibantu. Pelayanan yang luar biasa!</p>
+            <div class="testi-author">
+              <div class="testi-avatar" style="background:linear-gradient(135deg,#3B82F6,#06B6D4);">H</div>
+              <div>
+                <div class="testi-name">Hendra Wijaya</div>
+                <div class="testi-role">Pengguna aktif, Yogyakarta</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <div class="testi-stars">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <p class="testi-quote">Fitur laporan hariannya sangat detail tapi tetap mudah dibaca. Saya dan suami bisa pantau kondisi orangtua kami walau tinggal di kota yang berbeda.</p>
+            <div class="testi-author">
+              <div class="testi-avatar" style="background:linear-gradient(135deg,#6366F1,#8B5CF6);">L</div>
+              <div>
+                <div class="testi-name">Linda Kusuma</div>
+                <div class="testi-role">Anak dari pengguna, Bali</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: TENTANG KAMI -->
+      <div class="tab-panel" id="panel-tentang">
+        <div class="about-wrap">
+          <div class="about-left">
+            <h3>Kami Hadir untuk <span style="background:linear-gradient(90deg,var(--purple-main),var(--blue-accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Ketenangan Keluarga</span></h3>
+            <p>HealthWatch Pro didirikan tahun 2021 oleh sekelompok dokter, insinyur, dan desainer yang memiliki satu visi: menjadikan monitoring kesehatan lansia lebih mudah, akurat, dan terjangkau untuk semua keluarga di Indonesia.</p>
+            <p>Kami percaya bahwa teknologi kesehatan seharusnya menyederhanakan hidup, bukan mempersulit. Itulah mengapa setiap fitur kami dirancang dengan mempertimbangkan pengguna dari segala usia.</p>
+            <div class="about-values">
+              <div class="about-value">
+                <div class="about-value-icon">
+                  <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </div>
+                <div class="about-value-text">
+                  <strong>Berpusat pada Manusia</strong>
+                  <span>Setiap keputusan desain kami dimulai dari kebutuhan nyata pengguna lansia dan keluarganya.</span>
+                </div>
+              </div>
+              <div class="about-value">
+                <div class="about-value-icon">
+                  <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div class="about-value-text">
+                  <strong>Akurasi Medis Tinggi</strong>
+                  <span>Data kesehatan divalidasi bersama tenaga medis bersertifikat untuk memastikan keakuratan diagnosis.</span>
+                </div>
+              </div>
+              <div class="about-value">
+                <div class="about-value-icon">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <div class="about-value-text">
+                  <strong>Privasi & Keamanan</strong>
+                  <span>Data kesehatan Anda dilindungi dengan enkripsi end-to-end dan tidak pernah dijual ke pihak ketiga.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="about-right">
+            <p style="font-size:13px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px;">Tim Kami</p>
+            <div class="team-grid">
+              <div class="team-card">
+                <div class="team-avatar" style="background:linear-gradient(135deg,#7C3AED,#6366F1);">R</div>
+                <div class="team-name">Rendra Putra</div>
+                <div class="team-role">CEO & Co-Founder</div>
+              </div>
+              <div class="team-card">
+                <div class="team-avatar" style="background:linear-gradient(135deg,#10B981,#059669);">N</div>
+                <div class="team-name">dr. Nadia Irawan</div>
+                <div class="team-role">Chief Medical Officer</div>
+              </div>
+              <div class="team-card">
+                <div class="team-avatar" style="background:linear-gradient(135deg,#F59E0B,#EF4444);">F</div>
+                <div class="team-name">Fajar Setiawan</div>
+                <div class="team-role">CTO & Co-Founder</div>
+              </div>
+              <div class="team-card">
+                <div class="team-avatar" style="background:linear-gradient(135deg,#EC4899,#8B5CF6);">M</div>
+                <div class="team-name">Maya Lestari</div>
+                <div class="team-role">Head of Design</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    function switchTab(tab, event) {
+      if (event) event.preventDefault();
+
+      // Tab buttons
+      ['fitur','testimoni','tentang'].forEach(t => {
+        document.getElementById('btn-' + t).classList.remove('active');
+        document.getElementById('panel-' + t).classList.remove('active');
+        const navLink = document.getElementById('nav-' + t);
+        if (navLink) navLink.classList.remove('active');
+      });
+
+      document.getElementById('btn-' + tab).classList.add('active');
+      document.getElementById('panel-' + tab).classList.add('active');
+      const activeNav = document.getElementById('nav-' + tab);
+      if (activeNav) activeNav.classList.add('active');
+
+      // Scroll to tab section smoothly
+      document.getElementById('tab-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  </script>
+
 </body>
 </html>

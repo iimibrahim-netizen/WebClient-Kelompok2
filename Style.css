@@ -1,102 +1,122 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
-}
-
 body {
-  background-color: #f5f7fa;
-  color: #333;
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #fff;
 }
 
-header {
-  background-color: #4a90e2;
-  color: white;
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 60px;
+}
+
+.hero-text {
+  max-width: 50%;
+}
+
+.hero-text h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.hero-text p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.buttons .btn {
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-right: 15px;
+}
+
+.btn.primary {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+.btn.secondary {
+  background: #fff;
+  color: #2575fc;
+}
+
+.hero-card .card {
+  background: #fff;
+  color: #333;
   padding: 20px;
+  border-radius: 12px;
   text-align: center;
+  width: 250px;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.card .bpm {
+  font-size: 2rem;
+  margin: 10px 0;
+}
+
+.status.normal {
+  display: inline-block;
+  background: #4caf50;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
 }
 
 .stats {
   display: flex;
   justify-content: space-around;
-  margin: 20px;
+  background: rgba(255,255,255,0.1);
+  padding: 40px 20px;
 }
 
-.card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 20px;
-  width: 200px;
-  text-align: center;
-}
-
-.activity {
-  margin: 20px;
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-.chart-placeholder {
-  height: 200px;
-  background: #e0e0e0;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-}
-
-footer {
-  text-align: center;
-  padding: 10px;
-  background: #4a90e2;
-  color: white;
-}
-
-*****************************************************************************
-body {
-  display: grid;
-  grid-template-areas:
-    "header header"
-    "sidebar main"
-    "footer footer";
-  grid-template-columns: 200px 1fr;
-  grid-template-rows: auto 1fr auto;
-  height: 100vh;
+.stat h3 {
+  font-size: 1.8rem;
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
 }
 
-header { grid-area: header; background: #4a90e2; color: white; padding: 15px; }
-.sidebar { grid-area: sidebar; background: #2c3e50; color: white; padding: 20px; }
-main { grid-area: main; padding: 20px; background: #f5f7fa; }
-footer { grid-area: footer; background: #4a90e2; color: white; text-align: center; padding: 10px; }
-
-.cards { display: flex; gap: 20px; }
-.card {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  flex: 1;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: transform 0.3s;
-}
-.card:hover { transform: translateY(-5px); }
-
-.page {
-  opacity: 0;
-  transform: translateX(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  position: absolute;
-  width: 100%;
+.stat p {
+  margin: 5px 0 0;
 }
 
-.page.active {
-  opacity: 1;
-  transform: translateX(0);
-  position: relative;
+/* Style umum untuk navbar */
+nav {
+  background-color: #6c5ce7; /* ungu modern */
+  padding: 10px 20px;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex; /* horizontal */
+  justify-content: flex-end; /* menu di kanan */
+  gap: 20px;
+}
+
+nav ul li {
+  display: inline;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+nav ul li a:hover {
+  background-color: #a29bfe; /* efek hover */
+  color: #2d3436;
 }
